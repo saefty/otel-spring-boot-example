@@ -1,0 +1,51 @@
+plugins {
+	id 'org.springframework.boot' version '2.5.5'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+	otel
+
+	all {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// logging
+	implementation "org.springframework.boot:spring-boot-starter-log4j2"
+	implementation 'io.opentelemetry:opentelemetry-exporters-logging:0.9.1'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	runtimeOnly(
+			// metrics
+			'io.micrometer:micrometer-registry-statsd',
+			// logging
+			"org.apache.logging.log4j:log4j-layout-template-json",
+			"org.apache.logging.log4j:log4j-jcl" // Add Commons Logging Bridge to configure log levels in Elasticsearch client
+	)
+
+
+	otel(
+			"software.amazon.opentelemetry:aws-opentelemetry-agent:1.6.0@jar"
+	)
+}
+
+
+test {
+	useJUnitPlatform()
+}
+
+bootRun {
+	jvmArgs("-javaagent:" + project.rootDir.path + "/aws-opentelemetry-agent.jar")
+}
