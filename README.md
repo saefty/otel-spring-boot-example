@@ -32,3 +32,8 @@ cp build-logback.gradle build.gradle
 cp build-log4j2.gradle build.gradle
 ./gradlew bootRun
 ```
+
+---
+```shell
+curl localhost:8080 -vvv
+```
